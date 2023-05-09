@@ -21,6 +21,9 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\WebNotificationController;
 use App\Http\Controllers\RestaurentWebsiteController;
 
+Route::get('/payment', [App\Http\Controllers\RazorpayController::class, 'razorpay'])->name('razorpay');
+Route::post('razorpaypayment', [App\Http\Controllers\RazorpayController::class, 'payment'])->name('payment');
+
 //Route::group(['middleware' => 'prevent-back-history'],function(){
    Route::get('/qrcode', 'App\Http\Controllers\QRCodeController@index')->name('home.index');
 
