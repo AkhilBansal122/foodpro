@@ -17,7 +17,7 @@ use Auth;
 use Session;
 class WebsiteController extends Controller
 {
-    public function index($id){
+    public function indexold($id){
         
         if(substr($id, 0, 4)==="TBL-")
         {
@@ -88,6 +88,77 @@ class WebsiteController extends Controller
         }
     }
 
+    public function index($id){
+        
+        if(substr($id, 0, 4)==="TBL-")
+        {
+            // dd($id);
+            Session::put("table_id",$id);
+            if(is_null(auth()->user()))
+            {
+                return view('website.sign_up_in',compact('id'));
+            }
+            else if(auth()->user()->is_admin==5){
+                auth()->user()->table_id = $id;
+                $getChefData="";
+                if(!empty($id)){
+                 $getMenu = Tables::where('unique_id',$id)->first();
+              // dd( $getMenu);
+                 $getBanner = Banners::select('title','images','description')->where('user_id',$getMenu->restaurent_id)->first(); 
+                $getservices = Service::select('title','icon','description')->where(['user_id'=>$getMenu->restaurent_id,'status'=>'Active'])->get(); 
+                
+                  if(!is_null($getMenu)){
+                        $manager_id = $getMenu->user_id;
+                        $getChefData = User::where(['user_id'=>$manager_id,'is_admin'=>4,'status'=>"Active"])->get();
+                        Session::put("restaurent_id",$getMenu->restaurent_id);
+                        $getmenu= Category::where("user_id",$getMenu->restaurent_id)->where('status','Active')->take(3)->get(['id','name','image']);
+                        if(!empty($getmenu)){
+                            foreach($getmenu as $row){
+                                $getSub = SubCategories::where("category_id",$row->id)->where('status','Active')->get(['id','name','category_id','discount','image','price','description']);
+                                $row->sub_menu = $getSub;
+                            }
+                        }
+                        $getMenu->menu  = $getmenu;
+                    }
+                    $restaurentName="";
+                    return view('website.layout.main',compact('getMenu','getChefData','restaurentName','getBanner','getservices'));
+                }
+            }
+        }
+        else{
+           $restaurentName= $id;
+           $getRestaurent = User::where("name",$restaurentName)->where('is_admin',2)->first();
+           Session::put("table_id",$id);
+          
+
+           $manager_id = [];
+           $getMenu =[];
+           $getBanner=null;
+           $getservices = null;
+           if(!is_null($getRestaurent)){
+           $getAllManager= User::where("user_id",$getRestaurent->id)->where("is_admin",3)->where("status",'Active')->get(['id']);
+            $getBanner = Banners::select('title','images','description')->where('user_id',$getRestaurent->id)->first(); 
+            if(!empty($getAllManager)){
+                foreach($getAllManager as $m){
+                    array_push($manager_id,$m->id);
+                }
+            }
+              $getservices = Service::select('title','icon','description')->where(['user_id'=>$getRestaurent->id,'status'=>'Active'])->get(); 
+              
+            
+            $getmenus= Category::where("user_id",$getRestaurent->id)->where('status','Active')->take(3)->get(['id','name','image']);
+            if(!empty($getmenus)){
+                foreach($getmenus as $row){
+                    $getSub = SubCategories::where("category_id",$row->id)->where('status','Active')->get(['id','name','category_id','discount','image','price','description']);
+                    $row->sub_menu = $getSub;
+                    array_push($getMenu,$row);
+                }
+            }
+           } 
+           $getChefData = User::whereIn('user_id',$manager_id)->where(['is_admin'=>4,'status'=>"Active"])->get();
+            return view('website.layout.main',compact('getMenu','getChefData','restaurentName','getBanner','getservices'));
+        }
+    }
 
     public function about($id){//restaurent Id
 
@@ -227,6 +298,59 @@ class WebsiteController extends Controller
     }
 
     public function contact($id, Request $request){
+        $post = new Contact;
+       $user_id="";
+
+      $restaurentName="";
+      if(substr($id, 0, 4)==="TBL-")
+      {
+          $gettables = Tables::where("unique_id",$id)->first();
+          $user_id = $gettables->user_id;
+
+          // Create a new instance of the model
+        
+          // Set the properties with the data from the form
+          $post->name = $request->input('name');
+          // dd($post->name);
+          $post ->user_id=$user_id;
+          $post->email = $request->input('email');
+          $post->subject = $request->input('subject');
+          $post->message = $request->input('message');
+
+          // Save the data in the database
+          $post->save();
+
+          if(auth()->user()->is_admin==5){
+              auth()->user()->table_id = $id;
+
+          }
+          // Session::get('table_id');
+          // Session::get('restaurent_id');
+      }
+      else{
+            $restaurentName = $id;
+          $getRestaurent = User::where("name",$restaurentName)->where('is_admin',2)->first();
+
+          // $getservices = Service::select('title','icon','description')->where(['user_id'=>$getRestaurent->id,'status'=>'Active'])->get();
+          // Create a new instance of the model
+        
+          // Set the properties with the data from the form
+          $post->name = $request->input('name');
+          // dd($post->name);
+          $post ->user_id=$getRestaurent->user_id;
+          $post->email = $request->input('email');
+          $post->subject = $request->input('subject');
+          $post->message = $request->input('message');
+
+          // Save the data in the database
+          $post->save();
+
+      }
+
+      return view('website.contact',compact('restaurentName','post'));
+  }
+
+    public function contactold($id, Request $request){
           $post = new Contact;
          $user_id="";
 
