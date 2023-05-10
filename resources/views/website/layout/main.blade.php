@@ -199,12 +199,13 @@
 <script>
 function add_to_cart(table_id,product_id,product_price,qty){
     postData = {
-        product_id,
+        product_id:product_id,
         product_price:product_price,
         qty:qty ,
         table_id:table_id 
     }
-    route="{{url('/TBL-0026261/add_tocart')}}";
+
+    route="{{url('/'"+table_id+"'/add_tocart')}}";
 //alert(route);
     jQuery.ajax({
         url: route,

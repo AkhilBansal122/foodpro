@@ -128,6 +128,7 @@ class WebsiteController extends Controller
         else{
            $restaurentName= $id;
            $getRestaurent = User::where("name",$restaurentName)->where('is_admin',2)->first();
+         
            Session::put("table_id",$id);
           
 

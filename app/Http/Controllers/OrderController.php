@@ -25,17 +25,40 @@ class OrderController extends Controller
 {
     public function add_tocart(Request $request,$id){
         $id= $request->table_id;
+        
         if((auth()->user()) && (auth()->user()->is_admin==5)){
             $user_id = auth()->user()->id;
+           
             $table= Tables::where("unique_id",$request->table_id)->first();
             if(!is_null($table))
             {
                 $gst =  $table->get_restaurent->GST;
                 $cart = Cart::where("user_id",$user_id)->first();
-                $checked =  cartItem::where(['cart_id'=>$cart->id,'product_id'=>$request->product_id])->first();
-                if(!is_null($checked))
+               
+                if(!is_null($cart))
                 {
-                    return response()->json(['status'=>true, "message" =>"This Item Already add to Cart then Select Quentity"]);
+                    $checked =  cartItem::where(['cart_id'=>$cart->id,'product_id'=>$request->product_id])->first();
+                    if(!is_null($checked))
+                    {
+                        return response()->json(['status'=>true, "message" =>"This Item Already add to Cart then Select Quentity"]);
+                    }
+                    else{
+                        $cartDetails = new cartItem();
+                        $cartDetails->cart_id = $cart->id;
+                        $cartDetails->user_id = $user_id;
+                        $cartDetails->product_id = $request->product_id;
+                        $cartDetails->product_price = $request->price;
+                        $cartDetails->qty = 1;//$request->qty;
+                        $cartDetails->save();
+                        if($this->add_tocart_calculation($user_id,$cart->id))
+                        {
+                            return response()->json(['status'=>true, "message" =>"Add Item To Cart Successfully"]);
+                        }
+                        else{
+                            return response()->json(['status'=>true, "message" =>"Add Item To Cart Successfully"]);
+                        }
+    
+                    }
                 }
                 else{
                     if(is_null($cart)){

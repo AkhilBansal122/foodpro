@@ -352,8 +352,9 @@
               price= $(this).data("price");
               id= $(this).data("id");
               selected=  $(this).data("seleted");  
-              var routes =  "{{url('"+table_id+"/add_tocart')}}"; 
-                $.ajax({
+             // var routes =  "{{url('"+table_id+"/add_tocart')}}"; 
+               var routes = `{{url('/')}}/`+table_id+"/add_tocart";
+             $.ajax({
                      url: routes,
                      data: {"product_id":id,"table_id":table_id,"price":price,'id':id},
                      method: 'POST',

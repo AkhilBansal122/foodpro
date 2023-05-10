@@ -76,18 +76,7 @@
             url: "{{ route('restaurent.stockHistoryRestaurent') }}",
             data: function (d) {
                 d.search = $('input[type="search"]').val(),
-<<<<<<< HEAD
-<<<<<<< HEAD
-             //   d.search_key = $('.searchRestaurentName').val(),
-=======
-                d.search_key = $('.search_keyword').val(),
->>>>>>> cc16d6d45065aaf089e56f63107ec1c6eebac0ca
-=======
-                d.search_key = $('.search_keyword').val(),
-=======
-             //   d.search_key = $('.searchRestaurentName').val(),
->>>>>>> fcf9817 (changes web)
->>>>>>> 05-06
+               d.search_key = $('.search_keyword').val(),
                 d.start_date = $('.start_date').val()
                 d.end_date = $('.end_date').val()
             },
