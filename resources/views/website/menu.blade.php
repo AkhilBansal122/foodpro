@@ -355,7 +355,7 @@
              // var routes =  "{{url('"+table_id+"/add_tocart')}}"; 
                var routes = `{{url('/')}}/`+table_id+"/add_tocart";
 
-               
+
              $.ajax({
                      url: routes,
                      data: {"product_id":id,"table_id":table_id,"price":price,'id':id},
