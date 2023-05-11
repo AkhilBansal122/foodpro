@@ -13,7 +13,10 @@ class RazorpayController extends Controller
     {        
         return view('website.menu');
     }
-
+    public function checkout(){
+        echo "Test";
+    }
+    /* */
     public function payment(Request $request)
     {        
         $input = $request->all();        
@@ -30,12 +33,14 @@ class RazorpayController extends Controller
             catch (\Exception $e) 
             {
                 return  $e->getMessage();
-                \Session::put('error',$e->getMessage());
+         //       \Session::put('error',$e->getMessage());
                 return redirect()->back();
             }            
         }
         
-        \Session::put('success', 'Payment successful, your order will be despatched within an hours.');
+       // \Session::put('success', 'Payment successful, your order will be despatched within an hours.');
         return redirect()->back();
     }
+
+    
 }

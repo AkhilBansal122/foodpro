@@ -20,7 +20,5 @@ class IsCustomer
             return $next($request);
         }
         return redirect()->back()->with('‘error’',"You don't have access pages.");
-
-       // return $next($request);
     }
 }
