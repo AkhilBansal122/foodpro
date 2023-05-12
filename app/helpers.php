@@ -1,18 +1,11 @@
 <?php
-
 namespace App\Helpers;
 use QrCode;
 use App\Models\User;
 use App\Models\Tables;
 use File;
 use Form;
-use Str;
 class Helper {
-
-    public static function random_token()
-    {
-        return Str::random(50);
-    }
     public static function editAction($route,$param){
         return    $btn = '<a href="'.$route.'/'.$param.'" class="btn btn-light  radius-0 shadow btn-xs sharp me-1"><i class="bx bx-edit"></i></a>';
     }

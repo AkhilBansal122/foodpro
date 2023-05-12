@@ -148,6 +148,12 @@ $url = Request::segment(2);
 						<div class="parent-icon"><i class="bx bx-user" aria-hidden="true"></i></div>
 						<div class="menu-title">Services Manage</div>
 					</a>
+				</li>
+				<li  class="@if($url=='aboutus') mm-active @endif">
+					<a href="{{url('restaurent/aboutus/create')}}">
+						<div class="parent-icon"><i class="bx bx-user" aria-hidden="true"></i></div>
+						<div class="menu-title">About Manage</div>
+					</a>
 				</li>	
 					
 				<li  class="@if($url=='menu') mm-active @endif">

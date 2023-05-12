@@ -276,7 +276,15 @@ Route::any('restaurent/stockHistoryRestaurent', [App\Http\Controllers\InventoryM
 Route::any('restaurent/exportExcelstockHistory', [App\Http\Controllers\InventoryManageController::class, 'exportExcelstockHistory'])->name('restaurent.exportExcelstockHistory');
 
 
-
+//Aboutus Manage
+Route::any('restaurent/aboutus/data', [App\Http\Controllers\AboutController::class, 'data'])->name('restaurent/aboutus/data');
+Route::any('restaurent/aboutus', [App\Http\Controllers\AboutController::class, 'index'])->name('restaurent.aboutus');
+Route::any('restaurent/aboutus/create', [App\Http\Controllers\AboutController::class, 'create'])->name('restaurent.aboutus.create');
+Route::any('restaurent/aboutus/edit/{id}', [App\Http\Controllers\AboutController::class, 'edit'])->name('restaurent.aboutus.edit');
+Route::any('restaurent/aboutus/show/{id}', [App\Http\Controllers\AboutController::class, 'show'])->name('restaurent.aboutus.show');
+Route::any('restaurent/aboutus/store', [App\Http\Controllers\AboutController::class, 'store'])->name('restaurent.aboutus.store');
+Route::any('restaurent/aboutus/update', [App\Http\Controllers\AboutController::class, 'update'])->name('restaurent.aboutus.update');
+Route::any('restaurent/aboutus/status_change', [App\Http\Controllers\AboutController::class, 'status_change'])->name('restaurent.aboutus.status_change');
 
 });
   //IsManager
