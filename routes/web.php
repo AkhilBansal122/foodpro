@@ -22,7 +22,7 @@ use App\Http\Controllers\WebNotificationController;
 use App\Http\Controllers\RestaurentWebsiteController;
 
 Route::get('/payment', [App\Http\Controllers\RazorpayController::class, 'razorpay'])->name('razorpay');
-Route::post('razorpaypayment', [App\Http\Controllers\RazorpayController::class, 'payment'])->name('payment');
+Route::post('razorpaypayment', [App\Http\Controllers\RazorpayController::class, 'checkout'])->name('payment');
 
 
 Route::post('checkout', [App\Http\Controllers\RazorpayController::class,'checkout'])->name('checkout');
@@ -30,7 +30,7 @@ Route::post('checkout', [App\Http\Controllers\RazorpayController::class,'checkou
 //Route::post('/checkout', 'App\Http\Controllers\RazorpayController@checkout')->name('checkout');
 
 //Route::group(['middleware' => 'prevent-back-history'],function(){
-   Route::get('/qrcode', 'App\Http\Controllers\QRCodeController@index')->name('home.index');
+//   Route::get('/qrcode', 'App\Http\Controllers\QRCodeController@index')->name('home.index');
 
    Route::post('user/signup/store',[WebsiteController::class,'user_signup_store'])->name('user/signup/store');
    
@@ -56,7 +56,8 @@ Route::get('/resetpassword/{token}', [LoginController::class, 'resetpassword']);
 Route::post('/resetpassword', [LoginController::class, 'resetpassword'])->name('admin/resetpassword');
 Route::any('/{tblid}', [App\Http\Controllers\WebsiteController::class, 'index']);
 
-Route::group(['middleware' => ['is_customer']], function(){
+
+   Route::group(['middleware' => ['is_customer']], function(){
    Route::any('{tblid}/about', [App\Http\Controllers\WebsiteController::class, 'about'])->name('about');
    Route::any('{tblid}/service', [App\Http\Controllers\WebsiteController::class, 'service'])->name('service');
    Route::any('{tblid}/menu', [App\Http\Controllers\WebsiteController::class, 'menu'])->name('menu');
@@ -72,7 +73,6 @@ Route::group(['middleware' => ['is_customer']], function(){
    Route::any('{tblid}/remove_cartItem', [App\Http\Controllers\OrderController::class, 'remove_cartItem'])->name('remove_cartItem');
    //Route::any('{tblid}/checkout', [App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout');
    Route::any('{tblid}/shipping_address',[App\Http\Controllers\WebsiteController::class,'shipping_address'])->name('website.shipping_address');
-
    Route::any('{tblid}/payment_proceed',[App\Http\Controllers\RazorpayController::class,'formPage'])->name('website.payment');
 });
 
@@ -387,3 +387,5 @@ Route::group(['middleware' => ['IsWarehouse']], function(){
 
 
 });
+
+Route::get('test',[LoginController::class,'test']);

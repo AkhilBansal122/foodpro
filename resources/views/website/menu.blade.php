@@ -1,5 +1,21 @@
 @include('website.layout.header')
+<?php
+ $directoryURI = $_SERVER['REQUEST_URI'];
+ $path = parse_url($directoryURI, PHP_URL_PATH);
+ $components = explode('/', $path);
 
+ $uri1= isset($components[2]) ? $components[2] :'';
+
+ $uri2 = isset($components[3]) ? $components[3] :'';
+ $checked = false;
+
+ if(substr($uri1, 0, 4)==="TBL-")
+ {
+ $checked = true;    
+ }else{
+ $restaurentName = $uri1;
+ }
+?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
@@ -7,6 +23,11 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js" ></script>
 
 <input type="hidden" id="table_id" value="{{$id}}" />
+<style>
+   .razorpay-payment-button{
+      display: none;
+   }
+   </style>
 <div class="container-xxl py-5 bg-dark hero-header mb-5">
    <div class="container text-center my-5 pt-5 pb-4">
       <h1 class="display-3 text-white mb-3 animated slideInDown">Food Menu</h1>
@@ -78,43 +99,42 @@
                      <div class="btn-group">
                         <p>Sub Total</p>
                      </div>
-                     <small class="text-body-secondary" id="sub_total">Rs.120</small>
+                     <small class="text-body-secondary" id="sub_total">Rs.0.00</small>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">
                      <div class="btn-group">
                         <p>Discount Amount</p>
                      </div>
-                     <small class="text-body-secondary" id="discount_amount">Rs.00</small>
+                     <small class="text-body-secondary" id="discount_amount">Rs.0.00</small>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">
                      <div class="btn-group">
                         <p>Delivery Charge</p>
                      </div>
-                     <small class="text-body-secondary" id="shipping_amount">Rs.00</small>
+                     <small class="text-body-secondary" id="shipping_amount">Rs.0.00</small>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">
                      <div class="btn-group">
                         <p>GST Amount</p>
                      </div>
-                     <small class="text-body-secondary" id="gstAmount">Rs.00</small>
+                     <small class="text-body-secondary" id="gstAmount">Rs 0.00</small>
                   </div>
                   <hr>
                   <div class="d-flex justify-content-between align-items-center">
                      <div class="btn-group">
                         <p>Total </p>
                      </div>
-                     <small class="text-body-secondary" id="total_final_amount">Rs.1000</small>
+                     <small class="text-body-secondary" id="total_final_amount">Rs. 0.00</small>
                   </div>
-                  <!-- <a href="{{url('/')}}/{{auth()->user()->table_id}}/shipping_address"><button class="form-control text-white" style="border: none; background-color: orange;" >Check Out</button></a> -->
-                  <!-- <button class="form-control text-white" style="border: none; background-color: orange;" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Check Out</button> -->
-            
-                  <form action="{{ route('checkout') }}" method="POST" id="orderForm">
-                    @csrf
+                  @if($checked== true)
+                  
                      <input type="hidden" name="sub_total_hidden" id="sub_total_hidden" name=""  value=""/>
                      <input type="hidden" name="id_hidden" id="id_hidden"  value=""/>
                      <input type="hidden" name="total_hidden" id="total_hidden"  value=""/>
-                     <button tyle="submit" class="form-control text-white" style="border: none; background-color: orange;" >Check Out</button>
-                  </form>
+                     <button type="submit" id="rzp-button1"  class="form-control text-white" style="border: none; background-color: orange;" >Check Out</button>
+                  @else 
+                  <button  class="form-control text-white" onclick="showModal();" style="border: none; background-color: orange;" >Check Out</button>
+                  @endif
                </div>
             </div>
          </div>
@@ -122,6 +142,9 @@
    </div>
 </div>
 <link rel="stylesheet" href="{{ asset('public/assets/website/css/core-style.css')}}">
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
    <div class="modal-dialog">
@@ -150,7 +173,13 @@
             @endif
             <form action="{{ route('payment') }}" method="POST" id="orderForm">
                @csrf
-               <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="{{ env('RAZORPAY_KEY') }}" data-amount="1000" data-name="Appfinz" data-description="Payment" data-prefill.name="Kishan Kumar" data-prefill.email="kkmishra459@gmail.com" data-theme.color="#ff7529">
+               <script src="https://checkout.razorpay.com/v1/checkout.js" 
+               data-key="{{ env('RAZORPAY_KEY') }}" data-amount="1000" 
+               data-name="Appfinz" 
+               data-description="Payment" 
+               data-prefill.name="Kishan Kumar" 
+               data-prefill.email="kkmishra459@gmail.com" 
+               data-theme.color="#ff7529">
                </script>
                <input type="hidden" name="_token" value="{{csrf_token()}}"/>
                
@@ -262,9 +291,107 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
+<script>
+
+$('body').on('click','#rzp-button1',function(e){
+
+    e.preventDefault();
+
+    var amount = $('#total_hidden').val();
+
+    var total_amount = amount * 100;
+
+    var options = {
+
+        "key": "{{ env('RAZORPAY_KEY') }}", // Enter the Key ID generated from the Dashboard
+
+        "amount": total_amount, // Amount is in currency subunits. Default currency is INR. Hence, 10 refers to 1000 paise
+
+        "currency": "INR",
+
+        "name": "NiceSnippets",
+
+        "description": "Test Transaction",
+
+        "image": "https://www.nicesnippets.com/image/imgpsh_fullsize.png",
+
+        "order_id": "", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+
+        "handler": function (response){
+
+            $.ajaxSetup({
+
+                headers: {
+
+                    'X-CSRF-TOKEN': `{{csrf_token()}}`
+
+                }
+
+            });
+
+            $.ajax({
+
+                type:'POST',
+
+                url:"{{ route('checkout') }}",
+
+                data:{razorpay_payment_id:response.razorpay_payment_id,amount:amount,table_id:"{{auth()->user()->table_id ?? $restaurentName}}"},
+
+                success:function(data){
+
+                    $('.success-message').text(data.success);
+
+                    $('.success-alert').fadeIn('slow', function(){
+
+                       $('.success-alert').delay(5000).fadeOut(); 
+
+                    });
+
+                    $('.amount').val('');
+
+                }
+
+            });
+
+        },
+
+        "prefill": {
+
+            "name": "",
+
+            "email": "",
+
+            "contact": "818********6"
+
+        },
+
+        "notes": {
+
+            "address": "test test"
+
+        },
+
+        "theme": {
+
+            "color": "#F37254"
+
+        }
+
+    };
+
+    var rzp1 = new Razorpay(options);
+
+    rzp1.open();
+
+});
+
+</script>
 <script type="text/javascript">
    //initialising a variable name data
 
+   function showModal(){
+      $('#exampleModal').modal('show');
+   }
    var data = 0;
    //   $("#spinner").hide();
    //printing default value of data that is 0 in h2 tag
@@ -467,7 +594,14 @@
                $("#id_hidden").val(response.cart.id);
                $("#total_hidden").val(final_amount);
                $("#sub_total_hidden").val(price);
-             
+               
+               $("#paymentForm_withtblid").data("amount",total_final_amount);
+              
+               $("#paymentForm_withtblid").data("name","Restaurent Name");
+               $("#paymentForm_withtblid").data("description","description Restaurent Name");
+             //  $("#paymentForm_withtblid").data("name","Restaurent Name");
+
+               
                $.each(result, function(key, value) {
                   var product_name = value.product_name;
                   var product_price = value.product_price;
@@ -507,7 +641,7 @@
 </script>
 @include('website.layout.footer')
 <script>
-   menuSelect($("#menu_id").val(), "{{auth()->user()->table_id}}");
+   menuSelect($("#menu_id").val(), "{{auth()->user()->table_id ?? $restaurentName}}");
 
    function menuSelect(menu_id, tab_id) {
       formData = {

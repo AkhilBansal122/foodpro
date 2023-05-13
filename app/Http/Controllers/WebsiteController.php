@@ -161,7 +161,7 @@ class WebsiteController extends Controller
         }
     }
 
-    public function about($id){//restaurent Id
+    public function about($id = null){//restaurent Id
 
         $restaurentName="";
         if(substr($id, 0, 4)==="TBL-")
@@ -202,7 +202,7 @@ class WebsiteController extends Controller
   
     }
 
-    public function service($id){
+    public function service($id = null){
         $restaurentName="";
         if(substr($id, 0, 4)==="TBL-")
         {
@@ -224,7 +224,7 @@ class WebsiteController extends Controller
     }
     
 
-    public function menu($id){
+    public function menu($id = null){
        
         $restaurentName="";
         if(substr($id, 0, 4)==="TBL-")
@@ -273,7 +273,7 @@ class WebsiteController extends Controller
         return view('website.menu',compact('getMenu','getChefData','restaurentName','id'));
     }
 
-    public function booking($id){
+    public function booking($id = null){
         if(auth()->user()->is_admin==5){
             auth()->user()->table_id = $id;
         }
@@ -283,7 +283,7 @@ class WebsiteController extends Controller
         return view('website.booking');
     }
 
-    public function team($id){
+    public function team($id = null){
         if(auth()->user()->is_admin==5){
             auth()->user()->table_id = $id;
         }
@@ -291,7 +291,7 @@ class WebsiteController extends Controller
         Session::get('restaurent_id');
         return view('website.team');
     }
-    public function testimonial($id){
+    public function testimonial($id = null){
         if(auth()->user()->is_admin==5){
             auth()->user()->table_id = $id;
         }

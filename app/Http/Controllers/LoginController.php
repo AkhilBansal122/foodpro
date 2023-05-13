@@ -22,6 +22,9 @@ class LoginController extends Controller
     public function index(){
      return view("admin/login");
     }
+    public function test(){
+        return view('test');
+    }
 
     public function checkLogin(Request $request){
         if(!empty($request->All()))
